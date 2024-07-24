@@ -1,0 +1,20 @@
+{
+    "regionsSelector": [
+        {
+            "display": "Asia",
+            "internal": "asia"
+        },
+        {
+            "display": "Europe",
+            "internal": "europe"
+        },
+        {
+            "display": "Americas",
+            "internal": "americas"
+        }
+    ],
+    "latencyThresholds": {
+        "good": 600,
+        "moderate": 3000
+    }
+}

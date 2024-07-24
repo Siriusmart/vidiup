@@ -1,0 +1,99 @@
+body {
+  font-family: "Open Sans";
+}
+
+.counter {
+  font-family: "Roboto Mono";
+  font-weight: 800;
+}
+
+#title {
+  font-size: 3em;
+}
+
+@media only screen and (min-width: 600px) {
+    #title {
+        width: max-content;
+    }
+}
+
+#subhead {
+  margin-top: -1.5em;
+  padding-left: 0.3em;
+}
+
+.fullpage {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#mainscreen {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  min-width: 300px;
+}
+
+#urls {
+    margin-left: 0.3em;
+}
+
+#urls a {
+  font-weight: 600;
+  margin-top: 0.3em;
+  font-size: 1.3em;
+  display: block;
+}
+
+#record td {
+  font-family: "Roboto Mono";
+  padding: 1em;
+  padding-top: 0.2em;
+  text-align: left;
+}
+
+#record th {
+  padding-left: 1em;
+  text-align: left;
+}
+
+#record {
+    margin-left: -0.8em;
+}
+
+#regions * {
+    margin-left: 0.5em;
+}
+
+@media (prefers-color-scheme: dark) {
+  #up, .good {
+    color: #a6e3a1;
+  }
+
+  #recovering, .moderate {
+    color: #f9e2af;
+  }
+
+  #dead, .bad {
+    color: #f38ba8;
+  }
+
+  #pending, .inactive {
+    color: #7f849c;
+  }
+
+  div:has(#mainscreen) {
+    color: #cdd6f4;
+    background-color: #11111b;
+  }
+
+  #urls a, #foundinstance, #regions a {
+    color: #cdd6f4;
+  }
+}

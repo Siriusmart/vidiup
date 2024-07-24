@@ -1,0 +1,16 @@
+{
+    "polling": {
+        "interval": 1200,
+        "features": {
+            "video": true,
+            "playlist": true,
+            "search": true,
+            "channel": true
+        }
+    },
+    "offsets": {
+        "americas": -100,
+        "asia": -200,
+        "europe": 0
+    }
+}

@@ -1,0 +1,6 @@
+{
+    "hotPerRegion": 4,
+    "timeout": 5000,
+    "reverseProxy": true,
+    "port": 8082
+}

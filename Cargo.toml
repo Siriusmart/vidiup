@@ -1,0 +1,20 @@
+[package]
+name = "vidiup"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-files = "0.6.6"
+actix-web = "4.8.0"
+async-trait = "0.1.81"
+chrono = { version = "0.4.38", features = ["serde"] }
+dirs = "5.0.1"
+fastrand = "2.1.0"
+invidious = { version = "0.7.5", default-features = false, features = ["isahc_async"]}
+log = "0.4.22"
+serde = { version = "1.0.204", features = ["derive"] }
+serde_json = "1.0.120"
+simplelog = "0.12.2"
+tokio = { version = "1.39.1", features = ["macros","rt","time","fs","rt-multi-thread"] }
