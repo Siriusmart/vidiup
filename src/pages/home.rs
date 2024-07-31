@@ -6,7 +6,8 @@ use crate::INSTANCES_STATS;
 pub async fn home() -> HttpResponse {
     let (up, recovering, dead, pending) = *INSTANCES_STATS.get().unwrap().lock().unwrap();
 
-    let html = format!(r#"<!doctype html>
+    let html = format!(
+        r#"<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -38,7 +39,10 @@ pub async fn home() -> HttpResponse {
       </div>
     </div>
   </body>
-</html>"#);
+</html>"#
+    );
 
-    HttpResponse::Ok().content_type(ContentType::html()).body(html)
+    HttpResponse::Ok()
+        .content_type(ContentType::html())
+        .body(html)
 }

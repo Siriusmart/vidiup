@@ -1,4 +1,4 @@
-use std::{future::Future, pin::Pin, sync::{Arc, Mutex}, time::Duration};
+use std::{future::Future, pin::Pin, time::Duration};
 
 use actix_web::{
     dev::{Service, ServiceResponse},
@@ -90,7 +90,6 @@ async fn main() {
             } else {
                 Logger::default()
             })
-
             .service(api::scope())
             .service(css)
             .service(scripts)

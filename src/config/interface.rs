@@ -6,7 +6,7 @@ use crate::SavedFile;
 #[serde(rename_all = "camelCase")]
 pub struct InterfaceConfig {
     pub regions_selector: Vec<RegionSelectorEntry>,
-    pub latency_thresholds: LatencyThresholds
+    pub latency_thresholds: LatencyThresholds,
 }
 
 #[derive(Serialize, Deserialize, Clone)]

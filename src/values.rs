@@ -41,5 +41,9 @@ pub async fn init() {
 
     BLACKLISTS.get().unwrap().lock().unwrap().init();
     SAMPLESETS.get().unwrap().lock().unwrap().init();
-    INSTANCES_STATS.set(Arc::new(Mutex::new(INSTANCES_RECORD.get().unwrap().lock().unwrap().stat()))).unwrap();
+    INSTANCES_STATS
+        .set(Arc::new(Mutex::new(
+            INSTANCES_RECORD.get().unwrap().lock().unwrap().stat(),
+        )))
+        .unwrap();
 }

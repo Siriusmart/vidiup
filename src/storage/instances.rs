@@ -22,7 +22,7 @@ impl InstancesRecords {
         let mut pending = 0;
 
         for record in self.0.values() {
-            let (a,b,c,d) = record.stat();
+            let (a, b, c, d) = record.stat();
             up += a;
             recovering += b;
             dead += c;
@@ -364,7 +364,12 @@ impl RegionRecords {
     }
 
     pub fn stat(&self) -> (usize, usize, usize, usize) {
-        (self.hot.len() + self.recovered.len() + self.stashed.len(), self.recovering.len() + self.stashed_recovering.len(), self.dead.len() + self.stashed_dead.len(), self.pending.len())
+        (
+            self.hot.len() + self.recovered.len() + self.stashed.len(),
+            self.recovering.len() + self.stashed_recovering.len(),
+            self.dead.len() + self.stashed_dead.len(),
+            self.pending.len(),
+        )
     }
 
     pub fn update(&mut self) {
