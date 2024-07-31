@@ -38,8 +38,10 @@ async fn main() {
 
             let instances = INSTANCES_RECORD.get().unwrap().lock().unwrap().clone();
             instances.poll().await;
-            INSTANCES_RECORD.get().unwrap().lock().unwrap().update();
-            INSTANCES_STATS.set(Arc::new(Mutex::new(INSTANCES_RECORD.get().unwrap().lock().unwrap().stat()))).unwrap();
+
+            let mut record = INSTANCES_RECORD.get().unwrap().lock().unwrap();
+            record.update();
+            *INSTANCES_STATS.get().unwrap().lock().unwrap() = record.stat();
         }
     });
 
