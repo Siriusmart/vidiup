@@ -136,23 +136,23 @@ body {
   #mainscreen select,
   #mainscreen input,
   #mainscreen button {
-    border: 1px solid rgba(221, 120, 120, 0.5);
-    filter: drop-shadow(3px 3px 0px #dd7878);
+    border: 1px solid rgba(239, 159, 118, 0.5);
+    filter: drop-shadow(3px 3px 0px #ef9f76);
   }
 
   #mainscreen select,
   #mainscreen input,
   #mainscreen button {
-    border: 1px solid rgba(221, 120, 120, 0.5);
-    filter: drop-shadow(3px 3px 0px #dd7878);
+    border: 1px solid rgba(239, 159, 118, 0.5);
+    filter: drop-shadow(3px 3px 0px #ef9f76);
     transition: 300ms;
   }
 
   #mainscreen select:hover,
   #mainscreen input:focus,
   #mainscreen input:hover {
-    border: 1px solid rgba(230, 69, 83, 0.5);
-    filter: drop-shadow(3px 3px 0px #e64553);
+    border: 1px solid rgba(231, 130, 132, 0.5);
+    filter: drop-shadow(3px 3px 0px #e78284);
     transition: 300ms;
   }
 
@@ -171,13 +171,99 @@ body {
   }
 
   .invalid {
-      color: #e64553;
+    color: #e64553;
   }
 
   #urls a,
   #foundinstance,
   #regions a {
     color: #cdd6f4;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  #up,
+  .good {
+    color: #40a02b;
+  }
+
+  #recovering,
+  .moderate {
+    color: #df8e1d;
+  }
+
+  #dead,
+  .bad {
+    color: #d20f39;
+  }
+
+  #pending,
+  .inactive {
+    color: #8c8fa1;
+  }
+
+  div:has(#mainscreen),
+  #mainscreen select,
+  #mainscreen input,
+  #mainscreen button {
+    color: #4c4f69;
+  }
+
+  #mainscreen select,
+  #mainscreen input,
+  #mainscreen button {
+    border: 1px solid rgb(254, 100, 11, 0.5);
+    filter: drop-shadow(3px 3px 0px #fe640b);
+  }
+
+  #mainscreen select,
+  #mainscreen input,
+  #mainscreen button {
+    border: 1px solid rgb(254, 100, 11, 0.5);
+    filter: drop-shadow(3px 3px 0px #fe640b);
+    transition: 300ms;
+  }
+
+  #mainscreen select:hover,
+  #mainscreen input:focus,
+  #mainscreen input:hover {
+    border: 1px solid rgba(230, 69, 83, 0.5);
+    filter: drop-shadow(3px 3px 0px #e64553);
+    transition: 300ms;
+  }
+
+  #mainscreen.click select,
+  #mainscreen.click input,
+  #mainscreen.click button {
+    border: 1px solid rgb(64, 160, 43, 0.5);
+    filter: drop-shadow(3px 3px 0px #40a02b);
+    transition: 300ms;
+  }
+
+  #mainscreen.click #add {
+    transform: translate(2px, 2px);
+    border: 1px solid rgb(64, 160, 43, 0.5);
+    filter: drop-shadow(1px 1px 0px #40a02b);
+  }
+
+  .invalid {
+    color: #d20f39;
+  }
+
+  #urls a,
+  #foundinstance,
+  #regions a {
+    color: #4c4f69;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  #mainscreen input,
+  #mainscreen select,
+  #mainscreen #add {
+    display: block;
+    margin-left: 0;
+    margin-top: 0.7em;
   }
 }
 
