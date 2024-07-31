@@ -164,7 +164,7 @@ impl RegionRecords {
             .iter()
             .position(|hotrecord| hotrecord.instance.address == instance)
         {
-            let removed = self.recovering.remove(i);
+            let removed = self.hot.remove(i);
             self.dead.push((
                 DeadRecord {
                     instance: removed.instance,
@@ -180,7 +180,7 @@ impl RegionRecords {
             .iter()
             .position(|hotrecord| hotrecord.instance.address == instance)
         {
-            let removed = self.recovering.remove(i);
+            let removed = self.recovered.remove(i);
             self.dead.push((
                 DeadRecord {
                     instance: removed.instance,
