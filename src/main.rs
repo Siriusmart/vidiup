@@ -1,4 +1,4 @@
-use std::{future::Future, pin::Pin, time::Duration};
+use std::{future::Future, pin::Pin, sync::{Arc, Mutex}, time::Duration};
 
 use actix_web::{
     dev::{Service, ServiceResponse},
@@ -39,6 +39,7 @@ async fn main() {
             let instances = INSTANCES_RECORD.get().unwrap().lock().unwrap().clone();
             instances.poll().await;
             INSTANCES_RECORD.get().unwrap().lock().unwrap().update();
+            INSTANCES_STATS.set(Arc::new(Mutex::new(INSTANCES_RECORD.get().unwrap().lock().unwrap().stat()))).unwrap();
         }
     });
 

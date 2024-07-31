@@ -6,9 +6,9 @@ pub async fn css(params: Path<String>) -> impl Responder {
     NamedFile::open_async(format!("./static/css/{params}")).await
 }
 
-#[get("/scripts/{path:.*}")]
+#[get("/script/{path:.*}")]
 pub async fn scripts(params: Path<String>) -> impl Responder {
-    NamedFile::open_async(format!("./static/scripts/{params}")).await
+    NamedFile::open_async(format!("./static/script/{params}")).await
 }
 
 #[get("/add")]

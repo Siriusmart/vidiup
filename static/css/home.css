@@ -12,9 +12,9 @@ body {
 }
 
 @media only screen and (min-width: 600px) {
-    #title {
-        width: max-content;
-    }
+  #title {
+    width: max-content;
+  }
 }
 
 #subhead {
@@ -41,7 +41,7 @@ body {
 }
 
 #urls {
-    margin-left: 0.3em;
+  margin-left: 0.3em;
 }
 
 #urls a {
@@ -64,36 +64,129 @@ body {
 }
 
 #record {
-    margin-left: -0.8em;
+  margin-left: -0.8em;
 }
 
 #regions * {
-    margin-left: 0.5em;
+  margin-left: 0.5em;
+}
+
+#mainscreen input,
+#mainscreen select,
+#mainscreen #add {
+  color: inherit;
+  border-radius: 1em;
+  font-size: 1em;
+  font-family: inherit;
+  padding: 3px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+#mainscreen select {
+  margin-left: 1em;
+}
+
+#mainscreen input:focus {
+  outline: none;
+}
+
+#mainscreen #add {
+  display: block;
+  margin-top: 0.7em;
+}
+
+#mainscreen #add.click {
+  transform: translate(2px, 2px);
+}
+
+#mainscreen #add.invalid {
+  cursor: not-allowed;
 }
 
 @media (prefers-color-scheme: dark) {
-  #up, .good {
+  #up,
+  .good {
     color: #a6e3a1;
   }
 
-  #recovering, .moderate {
+  #recovering,
+  .moderate {
     color: #f9e2af;
   }
 
-  #dead, .bad {
+  #dead,
+  .bad {
     color: #f38ba8;
   }
 
-  #pending, .inactive {
+  #pending,
+  .inactive {
     color: #7f849c;
   }
 
-  div:has(#mainscreen) {
+  div:has(#mainscreen),
+  #mainscreen select,
+  #mainscreen input,
+  #mainscreen button {
     color: #cdd6f4;
     background-color: #11111b;
   }
 
-  #urls a, #foundinstance, #regions a {
+  #mainscreen select,
+  #mainscreen input,
+  #mainscreen button {
+    border: 1px solid rgba(221, 120, 120, 0.5);
+    filter: drop-shadow(3px 3px 0px #dd7878);
+  }
+
+  #mainscreen select,
+  #mainscreen input,
+  #mainscreen button {
+    border: 1px solid rgba(221, 120, 120, 0.5);
+    filter: drop-shadow(3px 3px 0px #dd7878);
+    transition: 300ms;
+  }
+
+  #mainscreen select:hover,
+  #mainscreen input:focus,
+  #mainscreen input:hover {
+    border: 1px solid rgba(230, 69, 83, 0.5);
+    filter: drop-shadow(3px 3px 0px #e64553);
+    transition: 300ms;
+  }
+
+  #mainscreen.click select,
+  #mainscreen.click input,
+  #mainscreen.click button {
+    border: 1px solid rgba(166, 227, 161, 0.5);
+    filter: drop-shadow(3px 3px 0px #a6e3a1);
+    transition: 300ms;
+  }
+
+  #mainscreen.click #add {
+    transform: translate(2px, 2px);
+    border: 1px solid rgba(166, 227, 161, 0.5);
+    filter: drop-shadow(1px 1px 0px #a6e3a1);
+  }
+
+  .invalid {
+      color: #e64553;
+  }
+
+  #urls a,
+  #foundinstance,
+  #regions a {
     color: #cdd6f4;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  #mainscreen input,
+  #mainscreen select,
+  #mainscreen #add {
+    display: block;
+    margin-left: 0;
+    margin-top: 0.7em;
   }
 }

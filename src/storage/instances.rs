@@ -59,6 +59,7 @@ impl InstancesRecords {
         let record = self.clone();
         tokio::spawn(async move {
             let _ = record.save().await;
+            INSTANCES_STATS.get().unwrap().lock().unwrap().3 += 1;
         });
     }
 

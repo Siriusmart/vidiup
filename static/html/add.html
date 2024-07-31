@@ -16,19 +16,17 @@
     <div class="fullpage">
       <div id="mainscreen">
         <h1 id="title">Add an instance</h1>
-        <p>
-        I'm currently on a trip in Scotland, so I wasn't able to implement this page.
-        </p>
-        <p>
-        You can add an instance by making a request to <i>https://vidiup.siri.sh/api/v1/add?region=[region]&amp;instance=[instance]</i>.
-        </p>
-        <ul>
-            <li>Where [region] is the location of the instance (asia/europe/americas)</li>
-            <li>Where [instance] is the domain of the instance (e.g. <i>invidious.fdn.fr</i>)</li>
-        </ul>
-        <p>Sorry I wasn't able to complete it, huge thanks to those who contribute to the listing.</p>
-        </div>
+        <p id="subhead" style="width: 25em;">Paste the URL to an Invidious instance below, and select its server region.</p>
+        <input type="text" id="instance" placeholder="Any Invidious URL" />
+        <select id="region">
+          <option value="asia">Asia</option>
+          <option value="europe">Europe</option>
+          <option value="americas">Americas</option>
+        </select>
+        <button id="add">Add instance</button>
+        <p id="preview"></p>
       </div>
     </div>
   </body>
+  <script src="/script/add.js"></script>
 </html>

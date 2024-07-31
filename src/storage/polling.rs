@@ -85,7 +85,6 @@ impl PolledSingleRecord {
                 async move {
                     let start = Instant::now();
                     let id = VIDEO_ID.get().unwrap().lock().unwrap().clone();
-                    client.video(&id, None).await.unwrap();
                     if client.video(&id, None).await.is_ok() {
                         *video.lock().unwrap() = Some(start.elapsed().as_millis() as u32)
                     }
@@ -101,7 +100,6 @@ impl PolledSingleRecord {
                 async move {
                     let start = Instant::now();
                     let id = PLAYLIST_ID.get().unwrap().lock().unwrap().clone();
-                    client.playlist(&id, None).await.unwrap();
                     if client.playlist(&id, None).await.is_ok() {
                         *playlist.lock().unwrap() = Some(start.elapsed().as_millis() as u32)
                     }
