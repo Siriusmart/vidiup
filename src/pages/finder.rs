@@ -149,7 +149,6 @@ async fn finder_task(query: Query<GetQuery>) -> String {
         let hot = records
             .0
             .values()
-            .into_iter()
             .flat_map(|item| &item.hot)
             .collect::<Vec<_>>();
 
@@ -188,7 +187,7 @@ async fn finder_task(query: Query<GetQuery>) -> String {
         .unwrap()
         .0
         .get(&instance.address)
-        .map(|item| item.clone())
+        .cloned()
         .clone()
         .unwrap_or_default();
 
@@ -198,8 +197,9 @@ async fn finder_task(query: Query<GetQuery>) -> String {
     let mut stats = Vec::new();
 
     if OUTBOUND_CONFIG.get().unwrap().polling.features.video {
-        headers.push(format!("<th>Video</th>"));
+        headers.push("<th>Video</th>".to_string());
         if let Some(latency) = record.video {
+            let latency = latency.saturating_add_signed(offset);
             stats.push(format!(
                 r#"<td class="{}">{}ms</td>"#,
                 INTERFACE_CONFIG
@@ -207,7 +207,7 @@ async fn finder_task(query: Query<GetQuery>) -> String {
                     .unwrap()
                     .latency_thresholds
                     .quality(latency),
-                latency.saturating_add_signed(offset)
+                latency
             ));
         } else {
             stats.push(r#"<td class="inactive">-ms</td>"#.to_string());
@@ -215,8 +215,9 @@ async fn finder_task(query: Query<GetQuery>) -> String {
     }
 
     if OUTBOUND_CONFIG.get().unwrap().polling.features.playlist {
-        headers.push(format!("<th>Playlist</th>"));
+        headers.push("<th>Playlist</th>".to_string());
         if let Some(latency) = record.playlist {
+            let latency = latency.saturating_add_signed(offset);
             stats.push(format!(
                 r#"<td class="{}">{}ms</td>"#,
                 INTERFACE_CONFIG
@@ -224,7 +225,7 @@ async fn finder_task(query: Query<GetQuery>) -> String {
                     .unwrap()
                     .latency_thresholds
                     .quality(latency),
-                latency.saturating_add_signed(offset)
+                latency
             ));
         } else {
             stats.push(r#"<td class="inactive">-ms</td>"#.to_string());
@@ -232,8 +233,9 @@ async fn finder_task(query: Query<GetQuery>) -> String {
     }
 
     if OUTBOUND_CONFIG.get().unwrap().polling.features.channel {
-        headers.push(format!("<th>Channel</th>"));
+        headers.push("<th>Channel</th>".to_string());
         if let Some(latency) = record.channel {
+            let latency = latency.saturating_add_signed(offset);
             stats.push(format!(
                 r#"<td class="{}">{}ms</td>"#,
                 INTERFACE_CONFIG
@@ -241,7 +243,7 @@ async fn finder_task(query: Query<GetQuery>) -> String {
                     .unwrap()
                     .latency_thresholds
                     .quality(latency),
-                latency.saturating_add_signed(offset)
+                latency
             ));
         } else {
             stats.push(r#"<td class="inactive">-ms</td>"#.to_string());
@@ -249,8 +251,9 @@ async fn finder_task(query: Query<GetQuery>) -> String {
     }
 
     if OUTBOUND_CONFIG.get().unwrap().polling.features.search {
-        headers.push(format!("<th>Search</th>"));
+        headers.push("<th>Search</th>".to_string());
         if let Some(latency) = record.search {
+            let latency = latency.saturating_add_signed(offset);
             stats.push(format!(
                 r#"<td class="{}">{}ms</td>"#,
                 INTERFACE_CONFIG
@@ -258,7 +261,7 @@ async fn finder_task(query: Query<GetQuery>) -> String {
                     .unwrap()
                     .latency_thresholds
                     .quality(latency),
-                latency.saturating_add_signed(offset)
+                latency
             ));
         } else {
             stats.push(r#"<td class="inactive">-ms</td>"#.to_string());

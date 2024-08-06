@@ -95,15 +95,8 @@ impl PollingRecord {
         let outbound = OUTBOUND_CONFIG.get().unwrap();
         let interval = outbound.polling.interval as i64;
         let probabilities = &outbound.poll_probabilities;
-        let in_queue: HashSet<String> = HashSet::from_iter(
-            POLL_QUEUE
-                .get()
-                .unwrap()
-                .lock()
-                .unwrap()
-                .clone()
-                .into_iter(),
-        );
+        let in_queue: HashSet<String> =
+            HashSet::from_iter(POLL_QUEUE.get().unwrap().lock().unwrap().clone());
 
         let mut hot = global
             .hot
@@ -119,7 +112,7 @@ impl PollingRecord {
                     .map(|item| item.last_polled)
                     .unwrap_or(0) as i64;
                 let overdue = last_polled - now + interval;
-                (overdue < 0).then(|| (address, overdue))
+                (overdue < 0).then_some((address, overdue))
             })
             .collect::<Vec<_>>();
         hot.sort_by_key(|item| item.1);
@@ -139,7 +132,7 @@ impl PollingRecord {
                     .map(|item| item.last_polled)
                     .unwrap_or(0) as i64;
                 let overdue = last_polled - now + interval;
-                (overdue < 0).then(|| (address, overdue))
+                (overdue < 0).then_some((address, overdue))
             })
             .collect::<Vec<_>>();
         recovered.sort_by_key(|item| item.1);
@@ -159,7 +152,7 @@ impl PollingRecord {
                     .map(|item| item.last_polled)
                     .unwrap_or(0) as i64;
                 let overdue = last_polled - now + interval;
-                (overdue < 0).then(|| (address, overdue))
+                (overdue < 0).then_some((address, overdue))
             })
             .collect::<Vec<_>>();
         recovering.sort_by_key(|item| item.1);
@@ -179,7 +172,7 @@ impl PollingRecord {
                     .map(|item| item.last_polled)
                     .unwrap_or(0) as i64;
                 let overdue = last_polled - now + interval;
-                (overdue < 0).then(|| (address, overdue))
+                (overdue < 0).then_some((address, overdue))
             })
             .collect::<Vec<_>>();
         dead.sort_by_key(|item| item.1);
@@ -199,7 +192,7 @@ impl PollingRecord {
                     .map(|item| item.last_polled)
                     .unwrap_or(0) as i64;
                 let overdue = last_polled - now + interval;
-                (overdue < 0).then(|| (address, overdue))
+                (overdue < 0).then_some((address, overdue))
             })
             .collect::<Vec<_>>();
         stashed_recovering.sort_by_key(|item| item.1);
@@ -221,11 +214,12 @@ impl PollingRecord {
                     .map(|item| item.last_polled)
                     .unwrap_or(0) as i64;
                 let overdue = last_polled - now + interval;
-                (overdue < 0).then(|| (address, overdue))
+                (overdue < 0).then_some((address, overdue))
             })
             .collect::<Vec<_>>();
         stashed_dead.sort_by_key(|item| item.1);
-        stashed_dead.truncate((stashed_dead.len() as f32 * probabilities.stashed_dead).ceil() as usize);
+        stashed_dead
+            .truncate((stashed_dead.len() as f32 * probabilities.stashed_dead).ceil() as usize);
 
         let mut stashed = global
             .stashed
@@ -241,7 +235,7 @@ impl PollingRecord {
                     .map(|item| item.last_polled)
                     .unwrap_or(0) as i64;
                 let overdue = last_polled - now + interval;
-                (overdue < 0).then(|| (address, overdue))
+                (overdue < 0).then_some((address, overdue))
             })
             .collect::<Vec<_>>();
         stashed.sort_by_key(|item| item.1);
@@ -261,20 +255,20 @@ impl PollingRecord {
                     .map(|item| item.last_polled)
                     .unwrap_or(0) as i64;
                 let overdue = last_polled - now + interval;
-                (overdue < 0).then(|| (address, overdue))
+                (overdue < 0).then_some((address, overdue))
             })
             .collect::<Vec<_>>();
         pending.sort_by_key(|item| item.1);
         pending.truncate((pending.len() as f32 * probabilities.pending).ceil() as usize);
 
         hot.into_iter()
-            .chain(recovering.into_iter())
-            .chain(recovered.into_iter())
-            .chain(dead.into_iter())
-            .chain(stashed_recovering.into_iter())
-            .chain(stashed_dead.into_iter())
-            .chain(stashed.into_iter())
-            .chain(pending.into_iter())
+            .chain(recovering)
+            .chain(recovered)
+            .chain(dead)
+            .chain(stashed_recovering)
+            .chain(stashed_dead)
+            .chain(stashed)
+            .chain(pending)
             .map(|item| item.0)
             .collect()
     }
@@ -397,7 +391,7 @@ impl PolledSingleRecord {
             ));
         }
 
-        while let Some(_) = set.join_next().await {}
+        while set.join_next().await.is_some() {}
 
         let video = *video.lock().unwrap();
         let playlist = *playlist.lock().unwrap();

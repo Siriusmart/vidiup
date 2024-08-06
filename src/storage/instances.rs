@@ -74,7 +74,7 @@ impl InstancesRecords {
 
         self.0
             .entry(region.clone())
-            .or_insert(RegionRecords::default())
+            .or_default()
             .pending
             .push(InstanceRecord {
                 address: instance,
@@ -370,11 +370,11 @@ impl RegionRecords {
         }
 
         if record.well() {
-            self.revive(&instance)
+            self.revive(instance)
         } else if record.dead() {
-            self.kill(&instance)
+            self.kill(instance)
         } else {
-            self.rest(&instance)
+            self.rest(instance)
         };
 
         // i will do standard deviation stuff so that instances that are too slow will be

@@ -11,7 +11,6 @@ pub async fn regions() -> Json<Vec<String>> {
             .offsets
             .0
             .keys()
-            .into_iter()
             .map(String::clone)
             .collect(),
     )

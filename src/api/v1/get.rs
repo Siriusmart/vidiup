@@ -100,7 +100,6 @@ pub async fn get(query: Query<GetQuery>) -> Json<GetResponse> {
         let hot = records
             .0
             .values()
-            .into_iter()
             .flat_map(|item| &item.hot)
             .collect::<Vec<_>>();
 

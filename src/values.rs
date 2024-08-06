@@ -25,6 +25,7 @@ pub static SEARCH_TERM: OnceLock<Arc<Mutex<String>>> = OnceLock::new();
 pub static BLACKLISTED_IP: OnceLock<Arc<Mutex<HashSet<String>>>> = OnceLock::new();
 pub static BLACKLISTED_INSTANCES: OnceLock<Arc<Mutex<HashSet<String>>>> = OnceLock::new();
 
+#[allow(clippy::type_complexity)]
 pub static INSTANCES_STATS: OnceLock<Arc<Mutex<(u32, u32, u32, u32)>>> = OnceLock::new();
 pub static CONCURRENT_POLLS: OnceLock<Arc<Mutex<u32>>> = OnceLock::new();
 pub static POLL_QUEUE: OnceLock<Arc<Mutex<Vec<String>>>> = OnceLock::new();
