@@ -1,4 +1,4 @@
-I'm packing up for a trip rn, there is no time to explain.
+# vidiup
 
 Google (YouTube) is actively trying to block and disable Invidious instances, public listings such as [api.invidious.io](https://api.invidious.io/) are no longer feasible, as it makes Google's job of creating a blacklist for accessing a lot easier.
 
@@ -12,4 +12,11 @@ You can probably figure out the API specs by yourself, if you look into the `/ap
 
 I got an instance running at [vidiup.siri.sh](https://vidiup.siri.sh).
 
-If you want to self host, figure it out yourself before I'm back from my trip. Just know that having more than one instance of this kinda defeats the whole point of a central index.
+## self host
+
+Having more than one instance kind of defeats the point of keeping the instances secret, but here's how you do it.
+
+1. Git clone and build the project.
+2. Copy files from `/template/storage` to `~/.local/share/vidiup`, `/template/config` to `~/.config/vidiup`
+3. Open `sampleset.json` and add a video, playlist, channel ***ID***, and a search term used for testing.
+4. Run it, it should work now. If it doesn't ask me for help.

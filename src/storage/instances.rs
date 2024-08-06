@@ -3,7 +3,6 @@ use std::collections::HashMap;
 use chrono::{DateTime, Utc};
 use log::warn;
 use serde::{Deserialize, Serialize};
-use tokio::task::JoinSet;
 
 use crate::*;
 
@@ -32,17 +31,44 @@ impl InstancesRecords {
         (up as u32, recovering as u32, dead as u32, pending as u32)
     }
 
+    pub fn as_global(&mut self) -> RegionRecords {
+        let mut out = RegionRecords::default();
+
+        for region in self.0.values() {
+            out.hot.append(&mut region.hot.clone());
+            out.recovered.append(&mut region.recovered.clone());
+            out.recovering.append(&mut region.recovering.clone());
+            out.dead.append(&mut region.dead.clone());
+            out.stashed_recovering
+                .append(&mut region.stashed_recovering.clone());
+            out.stashed_dead.append(&mut region.stashed_dead.clone());
+            out.stashed.append(&mut region.stashed.clone());
+            out.pending.append(&mut region.pending.clone());
+        }
+
+        out
+    }
+
+    pub fn update_single(&mut self, instance: &str, record: PolledSingleRecord) {
+        for region in self.0.values_mut() {
+            if region.update_single(instance, record.clone()) {
+                return;
+            }
+        }
+    }
+
     pub fn add(&mut self, instance: String, region: String, backer: String) {
         for (region_current, records) in self.0.iter_mut() {
             if records.add_backer(&instance, &backer) {
                 if region != region_current.as_str() {
                     warn!("{instance} may be in {region} (currently in {region_current})");
+                } else {
                     let record = self.clone();
                     tokio::spawn(async move {
                         let _ = record.save().await;
                     });
-                    return;
                 }
+                return;
             }
         }
 
@@ -60,42 +86,6 @@ impl InstancesRecords {
         tokio::spawn(async move {
             let _ = record.save().await;
             INSTANCES_STATS.get().unwrap().lock().unwrap().3 += 1;
-        });
-    }
-
-    pub fn update(&mut self) {
-        for region in self.0.values_mut() {
-            region.update();
-        }
-
-        let record = self.clone();
-        tokio::spawn(async move {
-            let _ = record.save().await;
-        });
-    }
-
-    pub async fn poll(&self) {
-        let mut set = JoinSet::new();
-
-        for region in self.0.clone().into_values() {
-            set.spawn(async move { region.poll().await });
-        }
-
-        let mut polled = HashMap::new();
-
-        while let Some(res) = set.join_next().await {
-            if let Ok(map) = res {
-                polled.extend(map);
-            }
-        }
-
-        let record = PollingRecord {
-            instances: polled,
-            last_polled: Utc::now().timestamp() as u64,
-        };
-        *POLLING_RECORD.get().unwrap().lock().unwrap() = record.clone();
-        tokio::spawn(async move {
-            let _ = record.save().await;
         });
     }
 }
@@ -372,24 +362,25 @@ impl RegionRecords {
         )
     }
 
-    pub fn update(&mut self) {
+    pub fn update_single(&mut self, instance: &str, record: PolledSingleRecord) -> bool {
         let mainconfig = MASTER_CONFIG.get().unwrap();
-        let records = POLLING_RECORD.get().unwrap().lock().unwrap().clone();
 
-        for (instance, record) in records.instances.iter() {
-            if record.well() {
-                self.revive(&instance)
-            } else if record.dead() {
-                self.kill(&instance)
-            } else {
-                self.rest(&instance)
-            };
+        if !self.contains(instance) {
+            return false;
         }
+
+        if record.well() {
+            self.revive(&instance)
+        } else if record.dead() {
+            self.kill(&instance)
+        } else {
+            self.rest(&instance)
+        };
 
         // i will do standard deviation stuff so that instances that are too slow will be
         // put in recovering, but not now i cba
 
-        while self.hot.len() < mainconfig.hot_per_region as usize {
+        if self.hot.len() < mainconfig.hot_per_region as usize {
             if let Some(instance) = self.recovered.pop() {
                 self.hot.push(instance);
             } else if let Some(instance) = self.stashed.pop() {
@@ -397,52 +388,60 @@ impl RegionRecords {
                     instance,
                     weight: 1.,
                 })
-            } else {
-                break;
             }
         }
+
+        true
     }
 
-    pub async fn poll(&self) -> HashMap<String, PolledSingleRecord> {
-        let mut set = JoinSet::new();
-
-        for instance in self
-            .hot
+    pub fn contains(&self, instance: &str) -> bool {
+        self.hot
             .iter()
             .chain(self.recovered.iter().chain(self.recovering.iter()))
-            .map(|entry| &entry.instance.address)
-            .chain(self.dead.iter().map(|entry| &entry.0.instance.address))
+            .map(|entry| entry.instance.address.as_str())
+            .chain(
+                self.dead
+                    .iter()
+                    .map(|entry| entry.0.instance.address.as_str()),
+            )
             .chain(
                 self.stashed_dead
                     .iter()
-                    .map(|entry| &entry.instance.address),
+                    .map(|entry| entry.instance.address.as_str()),
             )
             .chain(
                 self.stashed_recovering
                     .iter()
                     .chain(self.stashed.iter())
                     .chain(self.pending.iter())
-                    .map(|entry| &entry.address),
+                    .map(|entry| entry.address.as_str()),
             )
-        {
-            let instance = instance.to_string();
-            set.spawn(async move {
-                (
-                    instance.clone(),
-                    PolledSingleRecord::poll(instance.clone()).await,
-                )
-            });
-        }
+            .any(|item| item == instance)
+    }
 
-        let mut records = HashMap::new();
-
-        while let Some(res) = set.join_next().await {
-            if let Ok((instance, record)) = res {
-                records.insert(instance, record);
-            }
-        }
-
-        records
+    pub fn all_instances(&self) -> Vec<&str> {
+        self.hot
+            .iter()
+            .chain(self.recovered.iter().chain(self.recovering.iter()))
+            .map(|entry| entry.instance.address.as_str())
+            .chain(
+                self.dead
+                    .iter()
+                    .map(|entry| entry.0.instance.address.as_str()),
+            )
+            .chain(
+                self.stashed_dead
+                    .iter()
+                    .map(|entry| entry.instance.address.as_str()),
+            )
+            .chain(
+                self.stashed_recovering
+                    .iter()
+                    .chain(self.stashed.iter())
+                    .chain(self.pending.iter())
+                    .map(|entry| entry.address.as_str()),
+            )
+            .collect()
     }
 }
 

@@ -139,7 +139,7 @@ pub async fn get(query: Query<GetQuery>) -> Json<GetResponse> {
         .unwrap()
         .lock()
         .unwrap()
-        .instances
+        .0
         .get(&instance.address)
         .unwrap()
         .clone();

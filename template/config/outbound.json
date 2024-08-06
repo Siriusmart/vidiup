@@ -1,6 +1,7 @@
 {
     "polling": {
         "interval": 1200,
+        "maxConcurrent": 4,
         "features": {
             "video": true,
             "playlist": true,
@@ -12,5 +13,16 @@
         "americas": -100,
         "asia": -200,
         "europe": 0
-    }
+    },
+    "pollProbabilities": {
+        "hot": 1.0,
+        "recovered": 1.0,
+        "recovering": 1.0,
+        "dead": 0.2,
+        "stashedRecovering": 1.0,
+        "stashedDead": 0.2,
+        "stashed": 1.0,
+        "pending": 0.8
+    },
+    "checkInterval": 300
 }

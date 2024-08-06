@@ -186,10 +186,11 @@ async fn finder_task(query: Query<GetQuery>) -> String {
         .unwrap()
         .lock()
         .unwrap()
-        .instances
+        .0
         .get(&instance.address)
-        .unwrap()
-        .clone();
+        .map(|item| item.clone())
+        .clone()
+        .unwrap_or_default();
 
     let instance = instance.address;
 

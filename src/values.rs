@@ -26,6 +26,8 @@ pub static BLACKLISTED_IP: OnceLock<Arc<Mutex<HashSet<String>>>> = OnceLock::new
 pub static BLACKLISTED_INSTANCES: OnceLock<Arc<Mutex<HashSet<String>>>> = OnceLock::new();
 
 pub static INSTANCES_STATS: OnceLock<Arc<Mutex<(u32, u32, u32, u32)>>> = OnceLock::new();
+pub static CONCURRENT_POLLS: OnceLock<Arc<Mutex<u32>>> = OnceLock::new();
+pub static POLL_QUEUE: OnceLock<Arc<Mutex<Vec<String>>>> = OnceLock::new();
 
 pub async fn init() {
     let _ = MASTER_CONFIG.set(MasterConfig::load().await.unwrap());
@@ -46,4 +48,7 @@ pub async fn init() {
             INSTANCES_RECORD.get().unwrap().lock().unwrap().stat(),
         )))
         .unwrap();
+
+    CONCURRENT_POLLS.set(Arc::new(Mutex::new(0))).unwrap();
+    POLL_QUEUE.set(Arc::new(Mutex::new(Vec::new()))).unwrap();
 }

@@ -6,7 +6,7 @@ use actix_web::{
     middleware::Logger,
     App, HttpResponseBuilder, HttpServer,
 };
-use chrono::Utc;
+
 use log::info;
 use simplelog::Config;
 use vidiup::*;
@@ -28,20 +28,36 @@ async fn main() {
 
     tokio::spawn(async {
         loop {
-            let next_poll = POLLING_RECORD.get().unwrap().lock().unwrap().last_polled
-                + OUTBOUND_CONFIG.get().unwrap().polling.interval;
-            let now = Utc::now().timestamp() as u64;
+            {
+                let mut instances = INSTANCES_RECORD.get().unwrap().lock().unwrap().clone();
+                let record = POLLING_RECORD.get().unwrap().lock().unwrap();
+                let mut to_poll = record.to_poll(instances.as_global());
 
-            if next_poll > now {
-                tokio::time::sleep(Duration::from_secs(next_poll - now)).await;
+                POLL_QUEUE
+                    .get()
+                    .unwrap()
+                    .lock()
+                    .unwrap()
+                    .append(&mut to_poll);
             }
 
-            let instances = INSTANCES_RECORD.get().unwrap().lock().unwrap().clone();
-            instances.poll().await;
+            PollingRecord::start_poll();
 
-            let mut record = INSTANCES_RECORD.get().unwrap().lock().unwrap();
-            record.update();
-            *INSTANCES_STATS.get().unwrap().lock().unwrap() = record.stat();
+            tokio::time::sleep(Duration::from_secs(
+                OUTBOUND_CONFIG.get().unwrap().check_interval,
+            ))
+            .await;
+
+            if *CONCURRENT_POLLS.get().unwrap().lock().unwrap() != 0 {
+                tokio::spawn(async {
+                    let instances = {
+                        let instances = INSTANCES_RECORD.get().unwrap().lock().unwrap();
+                        instances.clone()
+                    };
+                    *INSTANCES_STATS.get().unwrap().lock().unwrap() = instances.stat();
+                    let _ = instances.save().await;
+                });
+            }
         }
     });
 
@@ -95,7 +111,7 @@ async fn main() {
             .service(scripts)
             .service(home::home)
             .service(finder::finder)
-            .service(add)
+            .service(add::add)
     })
     .bind(("0.0.0.0", port))
     .unwrap()
